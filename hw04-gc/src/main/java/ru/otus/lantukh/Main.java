@@ -19,7 +19,7 @@ public class Main {
 
         Benchmark mBean = new Benchmark();
         mBeanServer.registerMBean(mBean, name);
-        mBean.setPauseSize(1000);
+        mBean.setPauseSize(2500);
         mBean.run();
     }
 

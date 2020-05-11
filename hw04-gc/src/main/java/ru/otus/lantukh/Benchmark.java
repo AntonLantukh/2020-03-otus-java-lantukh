@@ -7,15 +7,15 @@ public class Benchmark implements BenchmarkMBean {
 
     public void run() throws InterruptedException {
         ArrayList<Animal> list = new ArrayList<>();
-        Animal animal = new Animal();
-        animal.setName("Wolf");
-        animal.setSound("Waugh!");
 
         for (int j = 0; ; j++) {
+            Animal animal = new Animal();
+            animal.setName("Wolf");
+            animal.setSound("Waugh!");
             list.add(animal);
 
             if (j % pauseSizeTime == 0) {
-                Thread.sleep(1);
+                Thread.sleep(40);
                 list.subList(0, j / pauseSizeTime);
             }
         }
