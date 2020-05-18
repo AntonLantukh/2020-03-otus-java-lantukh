@@ -9,4 +9,10 @@ public class CalculationImpl implements CalculationInterface {
         int sum = a + b;
         System.out.println("Result: " + sum);
     };
+
+    @Override
+    public void calculate(int a, int b, int c) {
+        int sum = a + b + c;
+        System.out.println("Result: " + sum);
+    };
 }
