@@ -8,5 +8,6 @@ public class Main {
         CalculationInterface calculationProxy = new CalculationProxy().getProxy();
 
         calculationProxy.calculate(10, 20);
+        calculationProxy.calculate(50, 20);
     }
 }
