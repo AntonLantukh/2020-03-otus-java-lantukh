@@ -1,53 +1,42 @@
 package ru.otus.lantukh.atm;
 
 import jdk.jfr.Description;
-import ru.otus.lantukh.atm.account.Account;
-import ru.otus.lantukh.atm.dispenseMechanism.DispensingMechanism;
 
 import java.util.HashMap;
 
 public class Atm {
-    private Account account;
-    private DispensingMechanism dispensingMechanism;
+    private Dispenser dispenser;
+    private HashMap<Integer, Integer> depositValue;
+    private int withdrawValue;
 
-    public Atm(Account account) {
-        this.account = account;
-        this.dispensingMechanism = new DispensingMechanism();
+    public Atm() {
+        this.dispenser = new Dispenser();
     }
 
     public void withdrawCash(int sum) {
-        account.withdrawCash(sum);
-        HashMap<Integer, Integer> amountMap = dispensingMechanism.dispenseCash(sum);
-
-        System.out.println(sum +  " dollars " + "were withdrawn: " + amountMap.toString());
-        System.out.println("The rest is " + account.getBalance());
-
+        this.withdrawValue = sum;
+        executeCommand(new WithdrawCommand(dispenser, this));
     }
 
-    public void depositCash(String sum) {
-        HashMap<Integer, Integer> amount = generateAmountMap(sum);
-        int parsedSum = countSumFromMap(amount);
-
-        dispensingMechanism.depositCash(amount);
-        account.depositCash(parsedSum);
-        System.out.println(parsedSum +  " dollars " + "were deposited.");
-        System.out.println("The rest is " + account.getBalance());
+    public void depositCash(HashMap<Integer, Integer> sum) {
+        this.depositValue = sum;
+        executeCommand(new DepositCommand(dispenser, this));
     }
 
-    @Description("Делаем мапу из консольной стринги")
-    private HashMap<Integer, Integer> generateAmountMap(String sum) {
-        HashMap<Integer, Integer> amount = new HashMap<>();
+    public HashMap<Integer, Integer> getDepositValue() {
+        return depositValue;
+    }
 
-        for (String cell : sum.split(",")) {
-            String[] value = cell.split(":");
-            amount.put(Integer.parseInt(value[0]), Integer.parseInt(value[1]));
-        }
+    public int getWithdrawValue() {
+        return withdrawValue;
+    }
 
-        return amount;
+    private void executeCommand(Command command) {
+        command.execute();
     }
 
     @Description("Считаем сумму по мапе <Номинал, Количество>")
-    private int countSumFromMap(HashMap<Integer, Integer> amount) {
+    public int countSumFromMap(HashMap<Integer, Integer> amount) {
         return amount
                 .entrySet()
                 .stream()

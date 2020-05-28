@@ -1,4 +1,4 @@
-package ru.otus.lantukh.atm.dispenseMechanism;
+package ru.otus.lantukh.atm;
 
 public class DispenseException extends RuntimeException {
     DispenseException() {
