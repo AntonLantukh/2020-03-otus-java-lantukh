@@ -6,33 +6,21 @@ import java.util.HashMap;
 
 public class Atm {
     private Dispenser dispenser;
-    private HashMap<Integer, Integer> depositValue;
-    private int withdrawValue;
 
     public Atm() {
         this.dispenser = new Dispenser();
     }
 
-    public void withdrawCash(int sum) {
-        this.withdrawValue = sum;
-        executeCommand(new WithdrawCommand(dispenser, this));
+    public HashMap<Integer, Integer> withdrawCash(int sum) {
+        HashMap<Integer, Integer> amount = dispenser.withdrawCash(sum);
+        System.out.println(sum +  " dollars " + "were withdrawn: " + amount.toString());
+
+        return amount;
     }
 
     public void depositCash(HashMap<Integer, Integer> sum) {
-        this.depositValue = sum;
-        executeCommand(new DepositCommand(dispenser, this));
-    }
-
-    public HashMap<Integer, Integer> getDepositValue() {
-        return depositValue;
-    }
-
-    public int getWithdrawValue() {
-        return withdrawValue;
-    }
-
-    private void executeCommand(Command command) {
-        command.execute();
+        dispenser.depositCash(sum);
+        System.out.println(countSumFromMap(sum) +  " dollars " + "were deposited.");
     }
 
     @Description("Считаем сумму по мапе <Номинал, Количество>")
