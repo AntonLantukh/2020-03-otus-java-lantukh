@@ -9,7 +9,7 @@ public class Animal {
     private Integer height;
     private String name;
     private String[] friends;
-    private Integer[] numbers;
+    private int[] numbers;
     private Collection<String> collection;
 
     public Animal (
@@ -17,7 +17,7 @@ public class Animal {
             int height,
             String name,
             String[] friends,
-            Integer[] numbers,
+            int[] numbers,
             ArrayList<String> collection
     ) {
         this.age = age;
@@ -35,6 +35,8 @@ public class Animal {
                 ", height=" + height +
                 ", name='" + name + '\'' +
                 ", friends=" + Arrays.toString(friends) +
+                ", numbers=" + Arrays.toString(numbers) +
+                ", collection=" + collection +
                 '}';
     }
 }

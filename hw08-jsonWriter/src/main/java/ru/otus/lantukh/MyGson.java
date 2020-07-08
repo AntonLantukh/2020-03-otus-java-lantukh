@@ -4,6 +4,7 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 
 import java.util.Collection;
@@ -98,10 +99,9 @@ public class MyGson {
 
     private void addArray(JsonObjectBuilder jsonObject, String name, Object value) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        Object[] array = (Object []) value;
 
-        for (int i = 0; i < array.length; i++) {
-            Object element = array[i];
+        for (int i = 0; i < Array.getLength(value); i++) {
+            Object element = Array.get(value, i);
             if (element == null) {
                 jsonArray.addNull();
             } else if (isPrimitiveField(element.getClass())) {

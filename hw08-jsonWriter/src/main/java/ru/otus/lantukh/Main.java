@@ -34,7 +34,7 @@ public class Main {
         return new String[]{"Fox", "Wolf", "Monkey"};
     }
 
-    private static Integer[] integerArrayFactory() {
-        return new Integer[]{1, 2, 3};
+    private static int[] integerArrayFactory() {
+        return new int[]{1, 2, 3};
     }
 }
