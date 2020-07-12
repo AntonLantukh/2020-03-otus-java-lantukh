@@ -3,6 +3,7 @@ package ru.otus.lantukh;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 public class Animal {
     private int age;
@@ -38,5 +39,27 @@ public class Animal {
                 ", numbers=" + Arrays.toString(numbers) +
                 ", collection=" + collection +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animal animal = (Animal) o;
+
+        return age == animal.age &&
+                Objects.equals(height, animal.height) &&
+                Objects.equals(name, animal.name) &&
+                Arrays.equals(friends, animal.friends) &&
+                Arrays.equals(numbers, animal.numbers) &&
+                Objects.equals(collection, animal.collection);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(age, height, name, collection);
+        result = 31 * result + Arrays.hashCode(friends);
+        result = 31 * result + Arrays.hashCode(numbers);
+        return result;
     }
 }

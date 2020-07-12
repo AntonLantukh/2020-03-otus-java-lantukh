@@ -1,26 +1,70 @@
 package ru.otus.lantukh;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 
 import java.util.Collection;
 
 public class MyGson {
+    final char DM = (char) 34;
+
     public String toJson(Object obj) {
+        if (obj == null) {
+           return String.valueOf(obj);
+        }
+
+        String result;
+
+        if (Float.class.isAssignableFrom(obj.getClass())
+                || Double.class.isAssignableFrom(obj.getClass())
+                || Number.class.isAssignableFrom(obj.getClass())) {
+            result = toNumberJson(obj);
+        } else if (Character.class.isAssignableFrom(obj.getClass())
+                || String.class.isAssignableFrom(obj.getClass())) {
+            result = toStringJson(obj);
+        } else if (isArray(obj.getClass())) {
+            result = toArrayJson(obj);
+        } else if (isCollection(obj.getClass())) {
+            result = toCollectionJson(obj);
+        } else {
+            result = toObjectJson(obj);
+        }
+
+        return result;
+    }
+
+    private String toNumberJson(Object obj) {
+        return obj.toString();
+    }
+
+    private String toStringJson(Object obj) {
+        return DM + obj.toString() + DM;
+    }
+
+    private String toArrayJson(Object obj) {
+        JsonArrayBuilder jsonArrayBuilder = createArrayBuilder(obj);
+
+        return jsonArrayBuilder.build().toString();
+    }
+
+    private String toCollectionJson(Object obj) {
+        Object[] collection = convertCollectionToArray(obj);
+        JsonArrayBuilder jsonArrayBuilder = createArrayBuilder(collection);
+
+        return jsonArrayBuilder.build().toString();
+    }
+
+    private String toObjectJson(Object obj) {
         JsonObjectBuilder jsonObject = Json.createObjectBuilder();
         Class<?> clazz = obj.getClass();
         Field[] fieldsAll = clazz.getDeclaredFields();
 
         if (fieldsAll.length == 0) {
-            return buildJson(jsonObject);
+            return buildObjectJson(jsonObject);
         }
 
-        for (int i = 0; i < fieldsAll.length; i++) {
-            Field field = fieldsAll[i];
+        for (Field field : fieldsAll) {
             Class<?> fieldClazz = field.getType();
             String name = field.getName();
             Object value = getFieldValue(obj, field);
@@ -30,24 +74,23 @@ public class MyGson {
             }
 
             if (isString(fieldClazz)) {
-                addString(jsonObject, name, value);
+                addStringToObject(jsonObject, name, value);
             }
 
-            if (isArrayField(fieldClazz)) {
-                addArray(jsonObject, name, value);
+            if (isArray(fieldClazz)) {
+                addArrayToObject(jsonObject, name, value);
             }
 
-            if (isCollectionField(fieldClazz)) {
-                addCollection(jsonObject, name, value);
+            if (isCollection(fieldClazz)) {
+                addCollectionToObject(jsonObject, name, value);
             }
         }
 
-        return buildJson(jsonObject);
+        return buildObjectJson(jsonObject);
     }
 
-    private String buildJson(JsonObjectBuilder jsonObject) {
+    private String buildObjectJson(JsonObjectBuilder jsonObject) {
         JsonObject json = jsonObject.build();
-        System.out.println(json);
 
         return json.toString();
     }
@@ -61,7 +104,7 @@ public class MyGson {
         }
     }
 
-    private void addString(JsonObjectBuilder jsonObject, String name, Object value) {
+    private void addStringToObject(JsonObjectBuilder jsonObject, String name, Object value) {
         if (value == null) {
             jsonObject.addNull(name);
         } else {
@@ -74,10 +117,16 @@ public class MyGson {
             jsonObject.add(name, (Float) value);
         } else if (Double.class.isAssignableFrom(value.getClass())) {
             jsonObject.add(name, (Double) value);
-        } else if (Number.class.isAssignableFrom(value.getClass())) {
+        } else if (Byte.class.isAssignableFrom(value.getClass())) {
+            jsonObject.add(name, (Byte) value);
+        } else if (Short.class.isAssignableFrom(value.getClass())) {
+            jsonObject.add(name, (Short) value);
+        } else if (Integer.class.isAssignableFrom(value.getClass())) {
             jsonObject.add(name, (Integer) value);
+        } else if (Long.class.isAssignableFrom(value.getClass())) {
+            jsonObject.add(name, (Long) value);
         } else if (Character.class.isAssignableFrom(value.getClass())) {
-            jsonObject.add(name, (Character) value);
+            jsonObject.add(name, value.toString());
         } else if (Boolean.class.isAssignableFrom(value.getClass())) {
             jsonObject.add(name, (Boolean) value);
         }
@@ -88,20 +137,36 @@ public class MyGson {
             jsonArray.add((Float) value);
         } else if (Double.class.isAssignableFrom(value.getClass())) {
             jsonArray.add((Double) value);
-        } else if (Number.class.isAssignableFrom(value.getClass())) {
+        } else if (Byte.class.isAssignableFrom(value.getClass())) {
+            jsonArray.add((Byte) value);
+        } else if (Short.class.isAssignableFrom(value.getClass())) {
+            jsonArray.add((Short) value);
+        } else if (Integer.class.isAssignableFrom(value.getClass())) {
             jsonArray.add((Integer) value);
+        } else if (Long.class.isAssignableFrom(value.getClass())) {
+            jsonArray.add((Long) value);
         } else if (Character.class.isAssignableFrom(value.getClass())) {
-            jsonArray.add((Character) value);
+            jsonArray.add(value.toString());
         } else if (Boolean.class.isAssignableFrom(value.getClass())) {
             jsonArray.add((Boolean) value);
         }
     }
 
-    private void addArray(JsonObjectBuilder jsonObject, String name, Object value) {
+    private void addArrayToObject(JsonObjectBuilder jsonObject, String name, Object value) {
+        JsonArrayBuilder jsonArray = createArrayBuilder(value);
+        jsonObject.add(name, jsonArray);
+    }
+
+    private void addCollectionToObject(JsonObjectBuilder jsonObject, String name, Object value) {
+        Object[] arrayValue = convertCollectionToArray(value);
+        addArrayToObject(jsonObject, name, arrayValue);
+    }
+
+    private JsonArrayBuilder createArrayBuilder(Object array) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
 
-        for (int i = 0; i < Array.getLength(value); i++) {
-            Object element = Array.get(value, i);
+        for (int i = 0; i < Array.getLength(array); i++) {
+            Object element = Array.get(array, i);
             if (element == null) {
                 jsonArray.addNull();
             } else if (isPrimitiveField(element.getClass())) {
@@ -111,13 +176,13 @@ public class MyGson {
             }
         }
 
-        jsonObject.add(name, jsonArray);
+        return jsonArray;
     }
 
-    private void addCollection(JsonObjectBuilder jsonObject, String name, Object value) {
-        Collection<?> collection = (Collection<?>) value;
-        Object[] arrayValue = collection.toArray();
-        addArray(jsonObject, name, arrayValue);
+    private Object[] convertCollectionToArray(Object obj) {
+        Collection<?> collection = (Collection<?>) obj;
+
+        return collection.toArray();
     }
 
     private boolean isPrimitiveWrapper(Class<?> fieldClazz) {
@@ -135,7 +200,7 @@ public class MyGson {
         return fieldClazz.isPrimitive() || isPrimitiveWrapper(fieldClazz);
     }
 
-    private boolean isArrayField(Class<?> fieldClazz) {
+    private boolean isArray(Class<?> fieldClazz) {
         return fieldClazz.isArray();
     }
 
@@ -143,7 +208,7 @@ public class MyGson {
         return String.class.isAssignableFrom(fieldClazz);
     }
 
-    private boolean isCollectionField(Class<?> fieldClazz) {
+    private boolean isCollection(Class<?> fieldClazz) {
         return Collection.class.isAssignableFrom(fieldClazz);
     }
 }
