@@ -15,7 +15,6 @@ public class Department {
     public void add(Atm atm) {
         children.add(atm);
         atm.department = this;
-        eventManager.subscribe(Event.BALANCE, new EventBalanceListener(atm));
     }
 
     public void subscribeBalance() {

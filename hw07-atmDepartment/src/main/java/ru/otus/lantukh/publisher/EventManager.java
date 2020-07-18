@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import ru.otus.lantukh.listener.EventListener;
 
 public class EventManager {
-    Map<Event, List<EventListener>> listeners = new HashMap<>();
+    final Map<Event, List<EventListener>> listeners = new HashMap<>();
 
     public EventManager(Event[] operations) {
         for (Event operation: operations) {

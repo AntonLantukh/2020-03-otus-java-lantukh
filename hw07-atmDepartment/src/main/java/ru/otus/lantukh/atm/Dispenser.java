@@ -1,5 +1,6 @@
 package ru.otus.lantukh.atm;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class Dispenser {
         this.nominalValues = nominalValues;
     }
 
-    HashMap<Integer, CashCell> getVault() {
+    Map<Integer, CashCell> getVault() {
         return vault;
     }
 
@@ -36,7 +37,7 @@ public class Dispenser {
         cell.setCount(count);
     }
 
-    public void depositCash (HashMap<Integer, Integer> amount) {
+    public void depositCash (Map<Integer, Integer> amount) {
         for (HashMap.Entry<Integer, Integer> entry : amount.entrySet()) {
             Integer nominal = entry.getKey();
             Integer count = entry.getValue();
@@ -45,7 +46,7 @@ public class Dispenser {
         }
     }
 
-    public HashMap<Integer, Integer> withdrawCash(int amount) {
+    public Map<Integer, Integer> withdrawCash(int amount) {
         HashMap<Integer, Integer> dispensedCash = new HashMap<>(nominalValues.size());
         for (int cell : nominalValues) {
             int count = amount / cell;

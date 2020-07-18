@@ -3,6 +3,7 @@ package ru.otus.lantukh.atm;
 import ru.otus.lantukh.department.Department;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Atm {
     private final Dispenser dispenser;
@@ -12,8 +13,8 @@ public class Atm {
         this.dispenser = new Dispenser();
     }
 
-    public HashMap<Integer, Integer> withdrawCash(int sum) {
-        HashMap<Integer, Integer> amount = dispenser.withdrawCash(sum);
+    public Map<Integer, Integer> withdrawCash(int sum) {
+        Map<Integer, Integer> amount = dispenser.withdrawCash(sum);
 
         return amount;
     }
