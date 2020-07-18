@@ -113,41 +113,41 @@ public class MyGson {
     }
 
     private void addPrimitiveToObject(JsonObjectBuilder jsonObject, String name, Object value) {
-        if (Float.class.isAssignableFrom(value.getClass())) {
+        if (Float.class == value.getClass()) {
             jsonObject.add(name, (Float) value);
-        } else if (Double.class.isAssignableFrom(value.getClass())) {
+        } else if (Double.class == value.getClass()) {
             jsonObject.add(name, (Double) value);
-        } else if (Byte.class.isAssignableFrom(value.getClass())) {
+        } else if (Byte.class == value.getClass()) {
             jsonObject.add(name, (Byte) value);
-        } else if (Short.class.isAssignableFrom(value.getClass())) {
+        } else if (Short.class == value.getClass()) {
             jsonObject.add(name, (Short) value);
-        } else if (Integer.class.isAssignableFrom(value.getClass())) {
+        } else if (Integer.class == value.getClass()) {
             jsonObject.add(name, (Integer) value);
-        } else if (Long.class.isAssignableFrom(value.getClass())) {
+        } else if (Long.class == value.getClass()) {
             jsonObject.add(name, (Long) value);
-        } else if (Character.class.isAssignableFrom(value.getClass())) {
+        } else if (Character.class == value.getClass()) {
             jsonObject.add(name, value.toString());
-        } else if (Boolean.class.isAssignableFrom(value.getClass())) {
+        } else if (Boolean.class == value.getClass()) {
             jsonObject.add(name, (Boolean) value);
         }
     }
 
     private void addPrimitiveToArray(JsonArrayBuilder jsonArray, Object value) {
-        if (Float.class.isAssignableFrom(value.getClass())) {
+        if (Float.class == value.getClass()) {
             jsonArray.add((Float) value);
-        } else if (Double.class.isAssignableFrom(value.getClass())) {
+        } else if (Double.class == value.getClass()) {
             jsonArray.add((Double) value);
-        } else if (Byte.class.isAssignableFrom(value.getClass())) {
+        } else if (Byte.class == value.getClass()) {
             jsonArray.add((Byte) value);
-        } else if (Short.class.isAssignableFrom(value.getClass())) {
+        } else if (Short.class == value.getClass()) {
             jsonArray.add((Short) value);
-        } else if (Integer.class.isAssignableFrom(value.getClass())) {
+        } else if (Integer.class == value.getClass()) {
             jsonArray.add((Integer) value);
-        } else if (Long.class.isAssignableFrom(value.getClass())) {
+        } else if (Long.class == value.getClass()) {
             jsonArray.add((Long) value);
-        } else if (Character.class.isAssignableFrom(value.getClass())) {
+        } else if (Character.class == value.getClass()) {
             jsonArray.add(value.toString());
-        } else if (Boolean.class.isAssignableFrom(value.getClass())) {
+        } else if (Boolean.class == value.getClass()) {
             jsonArray.add((Boolean) value);
         }
     }
