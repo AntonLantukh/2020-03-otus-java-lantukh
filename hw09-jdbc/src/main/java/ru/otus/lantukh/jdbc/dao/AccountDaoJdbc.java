@@ -3,14 +3,14 @@ package ru.otus.lantukh.jdbc.dao;
 import ru.otus.lantukh.core.dao.AccountDao;
 import ru.otus.lantukh.core.model.Account;
 import ru.otus.lantukh.core.sessionmanager.SessionManager;
-import ru.otus.lantukh.jdbc.mapper.JdbcMapperImpl;
+import ru.otus.lantukh.jdbc.mapper.JdbcMapper;
 
 import java.util.Optional;
 
 public class AccountDaoJdbc implements AccountDao {
-    private final JdbcMapperImpl<Account> jdbcMapper;
+    private final JdbcMapper<Account> jdbcMapper;
 
-    public AccountDaoJdbc(JdbcMapperImpl<Account> jdbcMapper) {
+    public AccountDaoJdbc(JdbcMapper<Account> jdbcMapper) {
         this.jdbcMapper = jdbcMapper;
     }
 
@@ -21,7 +21,10 @@ public class AccountDaoJdbc implements AccountDao {
 
     @Override
     public long insertAccount(Account account) {
-        return jdbcMapper.insert(account);
+        long accountId = jdbcMapper.insert(account);
+        account.setNo(accountId);
+
+        return accountId;
     }
 
     @Override

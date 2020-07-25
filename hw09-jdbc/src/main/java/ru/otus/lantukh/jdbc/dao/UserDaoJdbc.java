@@ -1,17 +1,16 @@
 package ru.otus.lantukh.jdbc.dao;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
 import ru.otus.lantukh.core.dao.UserDao;
 import ru.otus.lantukh.core.model.User;
 import ru.otus.lantukh.core.sessionmanager.SessionManager;
-import ru.otus.lantukh.jdbc.mapper.JdbcMapperImpl;
+import ru.otus.lantukh.jdbc.mapper.JdbcMapper;
 
 public class UserDaoJdbc implements UserDao {
-    private final JdbcMapperImpl<User> jdbcMapper;
+    private final JdbcMapper<User> jdbcMapper;
 
-    public UserDaoJdbc(JdbcMapperImpl<User> jdbcMapper) {
+    public UserDaoJdbc(JdbcMapper<User> jdbcMapper) {
         this.jdbcMapper = jdbcMapper;
     }
 
@@ -22,7 +21,10 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public long insertUser(User user) {
-        return jdbcMapper.insert(user);
+        long userId = jdbcMapper.insert(user);
+        user.setId(userId);
+
+        return userId;
     }
 
     @Override

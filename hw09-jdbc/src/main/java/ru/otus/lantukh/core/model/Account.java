@@ -8,9 +8,14 @@ import java.math.BigInteger;
  */
 public class Account {
     @Id
-    private final long no;
+    private long no;
     private final String type;
     private final int rest;
+
+    public Account(String type, int rest) {
+        this.type = type;
+        this.rest = rest;
+    }
 
     public Account(long no, String type, int rest) {
         this.no = no;
@@ -20,6 +25,10 @@ public class Account {
 
     public long getNo() {
         return no;
+    }
+
+    public void setNo(long no) {
+        this.no = no;
     }
 
     public String getType() {

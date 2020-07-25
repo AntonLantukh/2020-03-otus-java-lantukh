@@ -4,25 +4,55 @@ import ru.otus.lantukh.core.model.Id;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EntityClassMetaDataImpl<T> {
-    Class clazz;
-    Field idField;
-    List<Field> allFields;
-    List<Field> fieldsWithoutId;
+public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
+    private Class clazz;
+    private String className;
+    private Constructor<T> constructor;
+    private Field idField;
+    private List<Field> allFields;
+    private List<Field> allFieldsWithoutId;
 
     EntityClassMetaDataImpl(Class<T> clazz) {
         this.clazz = clazz;
+        this.className = calculateName();
+        this.constructor = calculateConstructor();
+        this.idField = calculateIdField();
+        this.allFields = calculateAllFields();
+        this.allFieldsWithoutId = calculateFieldsWithoutId();
     }
 
-    Constructor<T> getConstructor() {
+    public Constructor<T> getConstructor() {
+        return constructor;
+    };
+
+    public Field getIdField() {
+        return idField;
+    };
+
+    public List<Field> getAllFields() {
+        return allFields;
+    };
+
+    public List<Field> getFieldsWithoutId() {
+        return allFieldsWithoutId;
+    };
+
+    public String getName() {
+        return className;
+    }
+
+    private String calculateName() {
+        return clazz.getSimpleName().toLowerCase();
+    }
+
+    private Constructor<T> calculateConstructor() {
         try {
-            Constructor<T> constructor = clazz.getDeclaredConstructors()[0];
+            Constructor<T> constructor = clazz.getDeclaredConstructors()[1];
             Class<?>[] types = getConstructorParams(constructor);
             Constructor<T> construct = clazz.getConstructor(types);
             construct.setAccessible(true);
@@ -33,7 +63,36 @@ public class EntityClassMetaDataImpl<T> {
         }
     };
 
-    Class<?>[] getConstructorParams(Constructor<T> constructor) {
+    private Field calculateIdField() {
+        Field[] fields = clazz.getDeclaredFields();
+
+        for (Field field: fields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                return field;
+            };
+        }
+
+        return null;
+    };
+
+    private List<Field> calculateAllFields() {
+        return Arrays.stream(clazz.getDeclaredFields()).collect(Collectors.toList());
+    };
+
+    private List<Field> calculateFieldsWithoutId() {
+        Field[] fields = clazz.getDeclaredFields();
+        List<Field> fieldsWithoutId = new ArrayList<>();
+
+        for (Field field: fields) {
+            if (!field.isAnnotationPresent(Id.class)) {
+                fieldsWithoutId.add(field);
+            };
+        }
+
+        return fieldsWithoutId;
+    };
+
+    private Class<?>[] getConstructorParams(Constructor<T> constructor) {
         Class<?>[] types = constructor.getParameterTypes();
 
         for(int i = 0; i < types.length; i++) {
@@ -59,67 +118,4 @@ public class EntityClassMetaDataImpl<T> {
 
         return types;
     }
-
-    Field getIdField() {
-        if (idField != null) {
-            return idField;
-        }
-
-        Field[] fields = clazz.getDeclaredFields();
-
-        for (Field field: fields) {
-            if (field.isAnnotationPresent(Id.class)) {
-                return field;
-            };
-        }
-
-        return null;
-    };
-
-    List<Field> getAllFields() {
-        if (allFields != null) {
-            return allFields;
-        }
-
-        return Arrays.stream(clazz.getDeclaredFields()).collect(Collectors.toList());
-    };
-
-    List<Field> getFieldsWithoutId() {
-        if (fieldsWithoutId != null) {
-            return fieldsWithoutId;
-        }
-
-        Field[] fields = clazz.getDeclaredFields();
-        List<Field> fieldsWithoutId = new ArrayList<>();
-
-        for (Field field: fields) {
-            if (!field.isAnnotationPresent(Id.class)) {
-                fieldsWithoutId.add(field);
-            };
-        }
-
-        return fieldsWithoutId;
-    };
-
-    String getClassName() {
-        return clazz.getSimpleName().toLowerCase();
-    }
-
-    String getIdFieldName() {
-        return getIdField().getName();
-    }
-
-
-    String getAllFieldsNames() {
-        return getAllFields().stream().map(Field::getName).collect(Collectors.joining(", "));
-    };
-
-    String getAllFieldsUnknownParams() {
-        return getAllFields().stream().map(field -> "?").collect(Collectors.joining(", "));
-    };
-
-    String getAllParametrizedFieldsNames() {
-        return getAllFields().stream().map(field -> field.getName() + " = ?").collect(Collectors.joining(", "));
-    };
-
 }

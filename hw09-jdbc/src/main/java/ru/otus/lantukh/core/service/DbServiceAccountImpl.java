@@ -21,10 +21,16 @@ public class DbServiceAccountImpl implements DBServiceAccount {
         try (var sessionManager = accountDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
-                var userId = accountDao.insertOrUpdate(account);
+                var accountId = accountDao.insertOrUpdate(account);
                 sessionManager.commitSession();
-                logger.info("saved account: {}", userId);
-                return userId;
+                if (account.getNo() == 0L) {
+                    account.setNo(accountId);
+                    logger.info("saved account: {}", accountId);
+                } else {
+                    logger.info("updated account: {}", accountId);
+                }
+
+                return accountId;
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 sessionManager.rollbackSession();
@@ -38,10 +44,10 @@ public class DbServiceAccountImpl implements DBServiceAccount {
         try (var sessionManager = accountDao.getSessionManager()) {
             sessionManager.beginSession();
             try {
-                Optional<Account> userOptional = accountDao.findByNo(id);
+                Optional<Account> accountOptional = accountDao.findByNo(id);
 
-                logger.info("account: {}", userOptional.orElse(null));
-                return userOptional;
+                logger.info("account: {}", accountOptional.orElse(null));
+                return accountOptional;
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 sessionManager.rollbackSession();

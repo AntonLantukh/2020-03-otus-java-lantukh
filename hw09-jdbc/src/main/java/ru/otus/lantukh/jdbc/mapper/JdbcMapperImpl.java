@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.lantukh.core.dao.UserDaoException;
 import ru.otus.lantukh.core.sessionmanager.SessionManager;
-import ru.otus.lantukh.jdbc.DbExecutorImpl;
+import ru.otus.lantukh.jdbc.DbExecutor;
 import ru.otus.lantukh.jdbc.dao.UserDaoJdbc;
 import ru.otus.lantukh.jdbc.sessionmanager.SessionManagerJdbc;
 
@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class JdbcMapperImpl<T> {
-    private final DbExecutorImpl<T> dbExecutor;
+public class JdbcMapperImpl<T> implements JdbcMapper<T> {
+    private final DbExecutor<T> dbExecutor;
     private final SessionManagerJdbc sessionManager;
     private static final Logger logger = LoggerFactory.getLogger(UserDaoJdbc.class);
-    private final EntitySQLMetaDataImpl<T> sqlMetaData;
-    private final EntityClassMetaDataImpl<T> classMetaData;
+    private final EntitySQLMetaData<T> sqlMetaData;
+    private final EntityClassMetaData<T> classMetaData;
 
-    public JdbcMapperImpl(Class<T> clazz, SessionManagerJdbc sessionManager, DbExecutorImpl<T> dbExecutor) {
+    public JdbcMapperImpl(Class<T> clazz, SessionManagerJdbc sessionManager, DbExecutor<T> dbExecutor) {
         this.dbExecutor = dbExecutor;
         this.sessionManager = sessionManager;
         this.sqlMetaData = new EntitySQLMetaDataImpl<T>(clazz);
@@ -34,7 +34,7 @@ public class JdbcMapperImpl<T> {
 
    public long insert(T objectData) {
         try {
-            List<Object> args = getFieldsValues(objectData);
+            List<Object> args = getFieldsWithoutIdValues(objectData);
             return dbExecutor.executeInsert(getConnection(), sqlMetaData.getInsertSql(), args);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -44,7 +44,7 @@ public class JdbcMapperImpl<T> {
 
     public long update(T objectData) {
         try {
-            List<Object> args = getFieldsValues(objectData);
+            List<Object> args = getFieldsWithoutIdValues(objectData);
             Object idField = getFieldValue(objectData, classMetaData.getIdField());
             args.add(idField);
 
@@ -102,8 +102,8 @@ public class JdbcMapperImpl<T> {
         }).toArray();
     }
 
-    List<Object> getFieldsValues(Object objectData) {
-        return classMetaData.getAllFields().stream()
+    List<Object> getFieldsWithoutIdValues(Object objectData) {
+        return classMetaData.getFieldsWithoutId().stream()
                 .map(field -> getFieldValue(objectData, field))
                 .collect(Collectors.toList());
     }

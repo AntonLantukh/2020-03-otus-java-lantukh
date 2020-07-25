@@ -1,11 +1,17 @@
 package ru.otus.lantukh.jdbc.mapper;
 
+import ru.otus.lantukh.core.sessionmanager.SessionManager;
+
+import java.util.Optional;
+
 public interface JdbcMapper<T> {
-    void insert(T objectData);
+    long insert(T objectData);
 
-    void update(T objectData);
+    long update(T objectData);
 
-    void insertOrUpdate(T objectData);
+    long insertOrUpdate(T objectData);
 
-    T findById(long id, Class<T> clazz);
+    Optional<T> findById(long id);
+
+    public SessionManager getSessionManager();
 }

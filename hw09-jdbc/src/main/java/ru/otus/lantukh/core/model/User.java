@@ -6,9 +6,14 @@ package ru.otus.lantukh.core.model;
  */
 public class User {
     @Id
-    private final long id;
+    private long id;
     private final String name;
     private final int age;
+
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
 
     public User(long id, String name, int age) {
         this.id = id;
@@ -18,6 +23,10 @@ public class User {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
