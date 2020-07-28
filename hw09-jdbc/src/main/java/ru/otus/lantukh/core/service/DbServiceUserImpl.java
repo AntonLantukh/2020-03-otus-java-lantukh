@@ -23,12 +23,6 @@ public class DbServiceUserImpl implements DBServiceUser {
             try {
                 var userId = userDao.insertOrUpdate(user);
                 sessionManager.commitSession();
-                if (user.getId() == 0L) {
-                    user.setId(userId);
-                    logger.info("saved user: {}", userId);
-                } else {
-                    logger.info("updated user: {}", userId);
-                }
 
                 return userId;
             } catch (Exception e) {
@@ -46,7 +40,6 @@ public class DbServiceUserImpl implements DBServiceUser {
             try {
                 Optional<User> userOptional = userDao.findById(id);
 
-                logger.info("user: {}", userOptional.orElse(null));
                 return userOptional;
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

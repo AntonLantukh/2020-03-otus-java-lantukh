@@ -23,12 +23,6 @@ public class DbServiceAccountImpl implements DBServiceAccount {
             try {
                 var accountId = accountDao.insertOrUpdate(account);
                 sessionManager.commitSession();
-                if (account.getNo() == 0L) {
-                    account.setNo(accountId);
-                    logger.info("saved account: {}", accountId);
-                } else {
-                    logger.info("updated account: {}", accountId);
-                }
 
                 return accountId;
             } catch (Exception e) {
@@ -45,8 +39,6 @@ public class DbServiceAccountImpl implements DBServiceAccount {
             sessionManager.beginSession();
             try {
                 Optional<Account> accountOptional = accountDao.findByNo(id);
-
-                logger.info("account: {}", accountOptional.orElse(null));
                 return accountOptional;
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

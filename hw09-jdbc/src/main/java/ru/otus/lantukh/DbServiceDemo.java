@@ -1,11 +1,8 @@
 package ru.otus.lantukh;
 
 import java.sql.SQLException;
-import java.util.Optional;
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.otus.lantukh.core.model.Account;
 import ru.otus.lantukh.core.service.DbServiceAccountImpl;
 import ru.otus.lantukh.jdbc.dao.AccountDaoJdbc;
@@ -24,8 +21,6 @@ import ru.otus.lantukh.jdbc.sessionmanager.SessionManagerJdbc;
  * created on 03.02.19.
  */
 public class DbServiceDemo {
-    private static final Logger logger = LoggerFactory.getLogger(DbServiceDemo.class);
-
     public static void main(String[] args) throws Exception {
         var dataSource = new DataSourceH2();
         var demo = new DbServiceDemo();
@@ -45,23 +40,10 @@ public class DbServiceDemo {
         var userDao = new UserDaoJdbc(jdbcUserMapper);
         var dbServiceUser = new DbServiceUserImpl(userDao);
 
-        var idUser1 = dbServiceUser.saveUser(new User("dbServiceUser", 30));
-        var idUser2 = dbServiceUser.saveUser(new User( "dbServiceUser50", 31));
+        var idUser1 = dbServiceUser.saveUser(new User(0L, "dbServiceUser", 30));
+        var idUser2 = dbServiceUser.saveUser(new User( 0L,"dbServiceUser50", 31));
         // Обновляем user
         dbServiceUser.saveUser(new User(idUser2,"dbServiceUser60", 31));
-
-        Optional<User> user1 = dbServiceUser.getUser(idUser1);
-        Optional<User> user2 = dbServiceUser.getUser(idUser2);
-
-        user1.ifPresentOrElse(
-                crUser -> logger.info("created user, name:{}", crUser.getName()),
-                () -> logger.info("user was not created")
-        );
-
-        user2.ifPresentOrElse(
-                crUser -> logger.info("created user, name:{}", crUser.getName()),
-                () -> logger.info("user was not created")
-        );
     }
 
     private static void performAccountOperations(SessionManagerJdbc sessionManager) {
@@ -71,23 +53,10 @@ public class DbServiceDemo {
         var accountDao = new AccountDaoJdbc(jdbcAccountMapper);
         var dbServiceAccount = new DbServiceAccountImpl(accountDao);
 
-        var idAccount1 = dbServiceAccount.saveAccount(new Account("new", 300));
-        var idAccount2 = dbServiceAccount.saveAccount(new Account( "old", 100));
+        var idAccount1 = dbServiceAccount.saveAccount(new Account(0L, "new", 300));
+        var idAccount2 = dbServiceAccount.saveAccount(new Account( 0L, "old", 100));
         // Обновляем account
         dbServiceAccount.saveAccount(new Account(idAccount2, "new", 700));
-
-        Optional<Account> account1 = dbServiceAccount.getAccount(idAccount1);
-        Optional<Account> account2 = dbServiceAccount.getAccount(idAccount2);
-
-        account1.ifPresentOrElse(
-                crAccount -> logger.info("created account, no:{}", crAccount.getNo()),
-                () -> logger.info("account was not created")
-        );
-
-        account2.ifPresentOrElse(
-                crAccount -> logger.info("created account, no:{}", crAccount.getNo()),
-                () -> logger.info("account was not created")
-        );
     }
 
     private void createUserTable(DataSource dataSource) throws SQLException {

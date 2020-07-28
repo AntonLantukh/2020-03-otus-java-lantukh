@@ -35,7 +35,20 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
    public long insert(T objectData) {
         try {
             List<Object> args = getFieldsWithoutIdValues(objectData);
-            return dbExecutor.executeInsert(getConnection(), sqlMetaData.getInsertSql(), args);
+            long id = dbExecutor.executeInsert(getConnection(), sqlMetaData.getInsertSql(), args);
+
+            Field fieldWithId = classMetaData.getIdField();
+            fieldWithId.setAccessible(true);
+
+            try {
+                fieldWithId.setLong(objectData, id);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+
+            logger.info("created " + classMetaData.getName().toLowerCase() + ": {}", objectData);
+
+            return id;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
@@ -48,7 +61,10 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
             Object idField = getFieldValue(objectData, classMetaData.getIdField());
             args.add(idField);
 
-            return dbExecutor.executeInsert(getConnection(), sqlMetaData.getUpdateSql(), args);
+            long id =  dbExecutor.executeInsert(getConnection(), sqlMetaData.getUpdateSql(), args);
+            logger.info("updated " + classMetaData.getName().toLowerCase() + ": {}", id);
+
+            return id;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
@@ -65,7 +81,10 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
                         Constructor<T> constructor = classMetaData.getConstructor();
                         List<Field> fields = classMetaData.getAllFields();
 
-                        return constructor.newInstance(getArgs(fields, rs));
+                        T obj = constructor.newInstance(getArgs(fields, rs));
+                        logger.info("found " + classMetaData.getName().toLowerCase() + ": {}", obj);
+
+                        return obj;
                     }
                 } catch (SQLException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                     logger.error(e.getMessage(), e);
