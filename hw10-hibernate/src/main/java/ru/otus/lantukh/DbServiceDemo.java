@@ -29,11 +29,20 @@ public class DbServiceDemo {
         UserDao userDao = new UserDaoHibernate(sessionManager);
         DBServiceUser dbServiceUser = new DbServiceUserImpl(userDao);
 
-        long id = dbServiceUser.saveUser(new User(0, "Вася", getAddressNew(), getPhoneNew()));
+        User user1 = new User(0, "Вася");
+        user1.setAddress(new AddressDataSet(0, "г. Москва, ул Фестивальная, д. 52"));
+        user1.addPhone(new PhoneDataSet(0, "+79998887766"));
+
+        long id = dbServiceUser.saveUser(user1);
 
         Optional<User> mayBeCreatedUser = dbServiceUser.getUser(id);
 
-        id = dbServiceUser.saveUser(new User(1L, "А! Нет. Это же совсем не Вася", getAddressUpdate(), getPhoneUpdate()));
+        User user2 = new User(1L, "А! Нет. Это же совсем не Вася");
+        user2.setAddress(new AddressDataSet(1L, "г. Москва, ул Льва Толстого, д. 16"));
+        user2.addPhone(new PhoneDataSet(1L, "+79853334422"));
+
+        id = dbServiceUser.saveUser(user2);
+
         Optional<User> mayBeUpdatedUser = dbServiceUser.getUser(id);
 
         System.out.println(mayBeCreatedUser);
@@ -45,21 +54,5 @@ public class DbServiceDemo {
         System.out.println("-----------------------------------------------------------");
         System.out.println(header);
         mayBeUser.ifPresentOrElse(System.out::println, () -> logger.info("User not found"));
-    }
-
-    private static AddressDataSet getAddressNew() {
-        return new AddressDataSet(0, "г. Москва, ул Фестивальная, д. 52");
-    }
-
-    private static PhoneDataSet getPhoneNew() {
-        return new PhoneDataSet(0, "+79998887766");
-    }
-
-    private static AddressDataSet getAddressUpdate() {
-        return new AddressDataSet(1L, "г. Москва, ул Льва Толстого, д. 16");
-    }
-
-    private static PhoneDataSet getPhoneUpdate() {
-        return new PhoneDataSet(1L, "+79853334422");
     }
 }

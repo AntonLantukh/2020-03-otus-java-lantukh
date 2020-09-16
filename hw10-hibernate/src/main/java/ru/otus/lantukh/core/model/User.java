@@ -21,9 +21,8 @@ public class User {
     @JoinColumn(name = "address_id")
     private AddressDataSet address;
 
-    @OneToMany(targetEntity = PhoneDataSet.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name="user_id")
-    private Set<PhoneDataSet> phone = new HashSet<PhoneDataSet>();
+    @OneToMany(targetEntity = PhoneDataSet.class, cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    private Set<PhoneDataSet> phones = new HashSet<>();
 
     public User() {}
 
@@ -36,7 +35,7 @@ public class User {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.phone.add(phone);
+        this.phones.add(phone);
     }
 
     public long getId() {
@@ -63,21 +62,21 @@ public class User {
         this.address = address;
     }
 
-    public Set<PhoneDataSet> getPhone() {
-        return phone;
+    public Set<PhoneDataSet> getPhones() {
+        return phones;
     }
 
-    public void setPhone(Set<PhoneDataSet> phone) {
-        this.phone = phone;
+    public void setPhones(Set<PhoneDataSet> phones) {
+        this.phones = phones;
     }
 
     public void addPhone(PhoneDataSet phone) {
-        this.phone.add(phone);
+        this.phones.add(phone);
         phone.setUser(this);
     }
 
     public void removePhone(PhoneDataSet phone) {
-        this.phone.remove(phone);
+        this.phones.remove(phone);
         phone.setUser(null);
     }
 
@@ -87,7 +86,7 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", address=" + address +
-                ", phone=" + phone +
+                ", phones=" + phones +
                 '}';
     }
 }

@@ -12,25 +12,27 @@ public class PhoneDataSet {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "number")
     private String number;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public PhoneDataSet() {
     }
 
-    public PhoneDataSet(long id, String number, User user) {
-        this.id = id;
-        this.number = number;
-        this.user = user;
-    }
-
     public PhoneDataSet(long id, String number) {
         this.id = id;
         this.number = number;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public long getId() {
@@ -47,15 +49,6 @@ public class PhoneDataSet {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        user.addPhone(this);
     }
 
     @Override
