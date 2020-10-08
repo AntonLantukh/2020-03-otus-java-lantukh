@@ -10,10 +10,7 @@ import java.util.WeakHashMap;
  * created on 14.12.18.
  */
 public class MyCache<K, V> implements HwCache<K, V> {
-    private final String PUT_OPERATION = "PUT_OPERATION";
-    private final String REMOVE_OPERATION = "REMOVE_OPERATION";
-
-    private final  WeakHashMap<K, V> cache;
+    private final WeakHashMap<K, V> cache;
     private final List<WeakReference<HwListener<K, V>>> listeners;
 
     public MyCache() {
@@ -24,23 +21,25 @@ public class MyCache<K, V> implements HwCache<K, V> {
     @Override
     public void put(K key, V value) {
         cache.put(key, value);
-        listeners.forEach(reference -> {
-            HwListener<K, V> listener = reference.get();
-
-            if (listener != null) {
-                listener.notify(key, value, PUT_OPERATION);
-            }
-        });
+        notifyListeners(key, value, OperationType.PUT);
     }
 
     @Override
     public void remove(K key) {
         V value = cache.remove(key);
+        notifyListeners(key, value, OperationType.REMOVE);
+    }
+
+    public void notifyListeners(K key, V value, OperationType action) {
         listeners.forEach(reference -> {
             HwListener<K, V> listener = reference.get();
 
             if (listener != null) {
-                listener.notify(key, value, REMOVE_OPERATION);
+                try {
+                    listener.notify(key, value, action);
+                } catch (Exception err) {
+                    throw new RuntimeException(err);
+                }
             }
         });
     }
@@ -60,6 +59,7 @@ public class MyCache<K, V> implements HwCache<K, V> {
         for(int i = 0; i < listeners.size(); i++) {
             HwListener<K, V> listListener = listeners.get(i).get();
             if (listListener == null) {
+                listeners.remove(i);
                 return;
             }
 

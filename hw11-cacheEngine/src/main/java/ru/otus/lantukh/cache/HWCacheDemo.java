@@ -19,14 +19,14 @@ public class HWCacheDemo {
 
         HwListener<Integer, Integer> listener1 = new HwListener<Integer, Integer>() {
             @Override
-            public void notify(Integer key, Integer value, String action) {
+            public void notify(Integer key, Integer value, OperationType action) {
                 logger.info("key:{}, value:{}, action: {}", key, value, action);
             }
         };
 
         HwListener<Integer, Integer> listener2 = new HwListener<Integer, Integer>() {
             @Override
-            public void notify(Integer key, Integer value, String action) {
+            public void notify(Integer key, Integer value, OperationType action) {
                 logger.info("key:{}, value:{}, action: {}", key, value, action);
             }
         };

@@ -3,6 +3,8 @@ package ru.otus.lantukh;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.lantukh.cache.HwCache;
+import ru.otus.lantukh.cache.MyCache;
 import ru.otus.lantukh.core.dao.UserDao;
 import ru.otus.lantukh.core.model.AddressDataSet;
 import ru.otus.lantukh.core.model.PhoneDataSet;
@@ -28,7 +30,8 @@ public class DbServiceDemo {
 
         SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
         UserDao userDao = new UserDaoHibernate(sessionManager);
-        DBServiceUser dbServiceUser = new DbServiceCacheDecorator(new DbServiceUserImpl(userDao));
+        HwCache<Integer, User> cache = new MyCache<>();
+        DBServiceUser dbServiceUser = new DbServiceCacheDecorator(new DbServiceUserImpl(userDao), cache);
 
         User user1 = new User(0, "Вася");
         user1.setAddress(new AddressDataSet(0, "г. Москва, ул Фестивальная, д. 52"));
