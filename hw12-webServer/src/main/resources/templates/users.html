@@ -1,0 +1,94 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователи</title>
+</head>
+
+<body>
+<h4>Создать пользователя</h4>
+<form>
+    <div style="margin-bottom: 8px">
+        <label style="display: block; margin-bottom: 4px" for="name">Имя</label>
+        <input type="text" id = "name" name="name" placeholder="Имя пользователя">
+    </div>
+    <div style="margin-bottom: 8px">
+        <label style="display: block; margin-bottom: 4px" for="address">Адрес</label>
+        <input type="text" id = "address" name="address" placeholder="г. Москва, ул. Малая Юшуньская, д. 3">
+    </div>
+    <div style="margin-bottom: 12px">
+        <label style="display: block; margin-bottom: 4px" for="phone">Телефон</label>
+        <input type="text" id = "phone" name="phone" placeholder="+79161234455">
+    </div>
+    <button type="submit">
+        Сохранить пользователя
+    </button>
+</form>
+
+<hr>
+
+<h4>Список пользователей</h4>
+<table style="width: 600px; margin-bottom: 8px">
+    <thead>
+        <tr>
+            <td style="width: 50px">Id</td>
+            <td style="width: 150px">Имя</td>
+            <td style="width: 100px">Адрес</td>
+            <td style="width: 100px">Телефон</td>
+        </tr>
+    </thead>
+    <tbody>
+    <#list users as user>
+        <tr>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.address}</td>
+            <td>
+                <#list user.phones as phone>
+                   <div>
+                       ${phone}
+                   </div>
+                </#list>
+            </td>
+        </tr>
+    </#list>
+    </tbody>
+</table>
+<button id="getUsers">Получить пользователей</button>
+</body>
+<script>
+    const getUsers = () => {
+        fetch('api/user')
+            .then(response => response.json())
+            .then(users => {
+                const tbody = document.querySelector('tbody');
+                tbody.innerHTML = '';
+                (users || []).forEach(({id, name, address, phones}) => {
+                    tbody.innerHTML += `
+                         <#noparse>
+                         <tr>
+                               <td>${id}</td>
+                               <td>${name}</td>
+                               <td>${address?.street}</td>
+                               <td>${(phones || []).map(p => p.number).join(', ')}</td>
+                         </tr>
+                         </#noparse>
+                       `
+                });
+            });
+    };
+
+    const createUser = evt => {
+        evt.preventDefault();
+
+        fetch('api/user',  {
+            method: 'POST',
+            body: new FormData(document.querySelector('form')),
+        });
+    };
+
+    const form = document.querySelector('form');
+    const getUsersButton = document.querySelector('#getUsers');
+
+    form.addEventListener('submit', createUser);
+    getUsersButton.addEventListener('click', getUsers);
+</script>
+</html>

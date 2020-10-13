@@ -8,7 +8,7 @@ plugins {
 
 idea {
     project {
-        languageLevel = 13
+        languageLevel = 14
     }
     module {
         downloadJavadoc = true
@@ -27,16 +27,19 @@ allprojects {
     dependencyManagement {
         dependencies {
             imports {
-                mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.6.RELEASE")
+                mavenBom("org.springframework.boot:spring-boot-dependencies:2.3.1.RELEASE")
             }
             dependency("com.google.guava:guava:${Versions.guava}")
-            dependency("javax.json:javax.json-api:${Versions.jsonApi}")
-            dependency("org.glassfish:javax.json:${Versions.javaxJson}")
-            dependency("com.google.code.gson:gson:${Versions.gson}")
-//            dependency("org.junit.jupiter:junit-jupiter-engine:${Versions.jupiterEngine}")
-//            dependency("org.junit.jupiter:junit-jupiter-params:${Versions.jupiterParams}")
-//            dependency("org.assertj:assertj-core:${Versions.assertj}")
-//            dependency("org.mockito:mockito-junit-jupiter:${Versions.mockito}")
+//            dependency("org.openjdk.jmh:jmh-core:${Versions.jmh}")
+//            dependency("org.openjdk.jmh:jmh-generator-annprocess:${Versions.jmh}")
+//            dependency("org.openjdk.jol:jol-core:${Versions.jol}")
+//            dependency("org.ow2.asm:asm-commons:${Versions.asm}")
+//            dependency("org.glassfish:javax.json:${Versions.glassfishJson}")
+//            dependency("com.google.protobuf:protobuf-java-util:${Versions.protobuf}")
+//            dependency("org.flywaydb:flyway-core:${Versions.flyway}")
+//            dependency("org.postgresql:postgresql:${Versions.postgresql}")
+//            dependency("org.testcontainers:junit-jupiter:${Versions.testcontainers}")
+//            dependency("org.testcontainers:postgresql:${Versions.testcontainers}")
         }
     }
 
@@ -47,6 +50,11 @@ allprojects {
 
         resolutionStrategy {
             force("javax.servlet:servlet-api:2.4")
+            force("commons-logging:commons-logging:1.1.1")
+            force("commons-lang:commons-lang:2.5")
+            force("org.codehaus.jackson:jackson-core-asl:1.8.8")
+            force("org.codehaus.jackson:jackson-mapper-asl:1.8.3")
+            force("org.codehaus.jettison:jettison:1.1")
         }
     }
 }
