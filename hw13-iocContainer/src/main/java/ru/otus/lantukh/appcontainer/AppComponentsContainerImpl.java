@@ -17,7 +17,9 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     private void processConfig(Class<?>... configClasses) {
-        Arrays.stream(configClasses).forEach(c -> {
+        Arrays.stream(configClasses)
+                .sorted(Comparator.comparingInt(c -> c.getAnnotation(AppComponentsContainerConfig.class).order()))
+                .forEach(c -> {
             checkConfigClass(c);
             collectAppComponents(c);
         });
@@ -27,7 +29,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         Method[] methods = configClass.getDeclaredMethods();
         Arrays.stream(methods)
                 .filter(m -> m.isAnnotationPresent(AppComponent.class))
-                .sorted(Comparator.comparingInt(m -> m.getParameterTypes().length))
+                .sorted(Comparator.comparingInt(m -> m.getAnnotation(AppComponent.class).order()))
                 .forEach((method) -> {
                     Object obj = getObjectFromMethodWithParams(configClass, method);
                     appComponentsByName.put(method.getAnnotation(AppComponent.class).name(), obj);
@@ -88,8 +90,13 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 .map(param -> {
                     Optional<Object> argParam = findObjectAmongAppComponents(param);
 
-                    return argParam.orElseGet(() -> instantiate(param));
-                }).toArray();
+                    if (argParam.isEmpty()) {
+                        throw new RuntimeException("App component not found");
+                    }
+
+                    return argParam.get();
+                })
+                .toArray();
 
         obj = callMethod(instantiate(configClass), method, args);
 
