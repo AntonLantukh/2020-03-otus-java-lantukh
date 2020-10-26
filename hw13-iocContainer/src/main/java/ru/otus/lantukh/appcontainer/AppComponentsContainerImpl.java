@@ -84,21 +84,14 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private Object getObjectFromMethodWithParams(Class<?> configClass, Method method) {
         Class<?>[] methodParams = method.getParameterTypes();
+        Object objectFromConfig = instantiate(configClass);
         Object obj;
         Object[] args = Arrays
                 .stream(methodParams)
-                .map(param -> {
-                    Optional<Object> argParam = findObjectAmongAppComponents(param);
-
-                    if (argParam.isEmpty()) {
-                        throw new RuntimeException("App component not found");
-                    }
-
-                    return argParam.get();
-                })
+                .map(param -> findObjectAmongAppComponents(param).orElseThrow(() -> new RuntimeException("App component not found")))
                 .toArray();
 
-        obj = callMethod(instantiate(configClass), method, args);
+        obj = callMethod(objectFromConfig, method, args);
 
         return obj;
     }
