@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create user</title>
+</head>
+<body>
+
+<h4>Создать пользователя</h4>
+<form id="create-form" th:action="@{/api/user}" th:object="${user}" th:method="post" accept-charset="utf-8">
+    <div style="margin-bottom: 8px">
+        <label style="display: block; margin-bottom: 4px" for="name">Имя</label>
+        <input type="text" id = "name" name="name" placeholder="Имя пользователя">
+    </div>
+    <div style="margin-bottom: 8px">
+        <label style="display: block; margin-bottom: 4px" for="address">Адрес</label>
+        <input type="text" id = "address" name="address" placeholder="г. Москва, ул. Малая Юшуньская, д. 3">
+    </div>
+    <div style="margin-bottom: 12px">
+        <label style="display: block; margin-bottom: 4px" for="phone">Телефон</label>
+        <input type="text" id = "phone" name="phone" placeholder="+79161234455">
+    </div>
+    <button type="submit">
+        Сохранить пользователя
+    </button>
+</form>
+<a th:href="@{/user/list}" href="userList.html">Список пользователей</a>
+</body>
+</html>
