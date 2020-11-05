@@ -7,7 +7,7 @@
 <body>
 
 <h4>Создать пользователя</h4>
-<form id="create-form" th:action="@{/api/user}" th:object="${user}" th:method="post" accept-charset="utf-8">
+<form>
     <div style="margin-bottom: 8px">
         <label style="display: block; margin-bottom: 4px" for="name">Имя</label>
         <input type="text" id = "name" name="name" placeholder="Имя пользователя">
@@ -26,4 +26,22 @@
 </form>
 <a th:href="@{/user/list}" href="userList.html">Список пользователей</a>
 </body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const form = document.querySelector('form');
+    const createUser = evt => {
+        evt.preventDefault();
+        const url = /*[[@{/api/user}]]*/
+            fetch(url,  {
+            method: 'POST',
+            body: new FormData(form),
+        }).then(() => {
+            const redirectUrl = /*[[@{/user/list}]]*/
+            window.location.replace(redirectUrl);
+        });
+    };
+
+    form.addEventListener('submit', createUser);
+    /*]]>*/
+</script>
 </html>
