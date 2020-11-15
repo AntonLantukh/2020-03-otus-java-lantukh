@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     private boolean ASC = true;
     private final Object monitor = new Object();
+    private String last;
 
     public static void main(String[] args) {
         Main main = new Main();
@@ -28,6 +29,7 @@ public class Main {
 
         System.out.println(Thread.currentThread().getName() + " | current: " + number);
         returnValue = ASC ? number + 1 : number - 1;
+        last = Thread.currentThread().getName();
 
         return returnValue;
     }
@@ -39,10 +41,13 @@ public class Main {
         synchronized (monitor) {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    monitor.notify();
+                    while (Thread.currentThread().getName().equals(last)) {
+                        monitor.wait();
+                    }
+
                     Thread.sleep(TimeUnit.SECONDS.toMillis(1));
                     counter = count(counter);
-                    monitor.wait();
+                    monitor.notify();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
