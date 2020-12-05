@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>View without controller</title>
+</head>
+<body>
+<div class="top">
+    <img src="./logo.svg" style="width: 300px; height: 300px">
+    <br/>
+    <h3>Добро пожаловать на стартовую страницу примера</h3>
+    <a th:href="@{/user/create}" href="userCreate.html">Новый пользователь</a>
+    <a th:href="@{/user/list}" href="userList.html">Список пользователей</a>
+</div>
+</body>
+</html>

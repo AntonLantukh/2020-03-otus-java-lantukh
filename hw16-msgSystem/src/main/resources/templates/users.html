@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create user</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<main style="padding: 16px; width: 600px">
+    <div style="margin-bottom: 20px">
+        <h4>Создать пользователя</h4>
+        <form>
+            <div class="form-group" style="margin-bottom: 8px">
+                <label style="display: block; margin-bottom: 4px" for="name">Имя</label>
+                <input class="form-control" type="text" id = "name" name="name" placeholder="Имя пользователя">
+            </div>
+            <div class="form-group" style="margin-bottom: 8px">
+                <label style="display: block; margin-bottom: 4px" for="address">Адрес</label>
+                <input class="form-control" type="text" id = "address" name="address" placeholder="г. Москва, ул. Малая Юшуньская, д. 3">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px">
+                <label style="display: block; margin-bottom: 4px" for="phone">Телефон</label>
+                <input class="form-control" type="text" id = "phone" name="phone" placeholder="+79161234455">
+            </div>
+            <button class="btn btn-primary" type="submit">
+                Сохранить пользователя
+            </button>
+        </form>
+    </div>
+
+    <div style="margin-bottom: 20px">
+        <h4>Список пользователей</h4>
+        <table class="table">
+            <thead>
+            <tr>
+                <th style="width: 50px">Id</th>
+                <th style="width: 150px">Имя</th>
+                <th style="width: 100px">Адрес</th>
+                <th style="width: 100px">Телефон</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.address}"></td>
+                <td>
+                    <div th:each="phone : ${user.phones}" th:text="${phone}"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+<script src="/app.js"></script>
+</html>
