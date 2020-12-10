@@ -11,8 +11,7 @@ import ru.otus.lantukh.model.User;
 import ru.otus.lantukh.sessionmanager.SessionManager;
 
 public class DbServiceUserImpl implements DBServiceUser {
-    private static Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
     private final UserDao userDao;
 
     public DbServiceUserImpl(UserDao userDao) {
